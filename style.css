@@ -20,3 +20,15 @@ html, body, canvas{
     width: 100%;
     height: 100%;
 }
+
+#canvas2{
+    background: #000;
+    top: 0px;
+    left: 0px;
+    position: fixed;
+    margin: auto;
+    padding: 0px;
+    width: 200px;
+    height: 200px;
+    z-index: 11;
+}

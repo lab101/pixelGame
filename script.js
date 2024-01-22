@@ -4,7 +4,6 @@ const gl = canvas.getContext('webgl')
 const { mat2, mat2d, mat4, mat3, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 
 
-console.log(gl.getSupportedExtensions());
 
 const vertexShader = gl.createShader(gl.VERTEX_SHADER)
 gl.shaderSource(vertexShader, `
@@ -76,7 +75,7 @@ const uniforms = {
   mvp: gl.getUniformLocation(program, 'u_mvp')
 }
 
-const NUM_POINTS = 100000
+const NUM_POINTS = 10000
 const points = []
 for (let index = 0; index < NUM_POINTS; index++) {
   points.push((Math.random() - 0.5) * 8)
@@ -117,7 +116,21 @@ let frameID
 
 
 function render(now) {
+
+  const ctx2 = document.getElementById("canvas2").getContext("2d");
+  ctx2.font = "48px serif";
+
+  ctx2.fillStyle = '#FF0000';
+  ctx2.fillRect(0, 0, 400, 400);
   
+  ctx2.fillStyle = '#FFFFFF';
+  ctx2.fillText("Hello world", 10, 50);
+
+  //https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
+
+
+  //console.log(ctx2);
+
   if (canvas.width !== canvas.clientWidth) {
     canvas.width = canvas.clientWidth
     isDirty = true
@@ -156,9 +169,11 @@ function render(now) {
   gl.uniformMatrix4fv(uniforms.mvp, false, mvpMatrix)
   gl.drawArrays(gl.POINTS, 0, NUM_POINTS)
   
-  //console.count('render')
   
   frameID = window.requestAnimationFrame(render)
+
+ 
+
   
 }
 

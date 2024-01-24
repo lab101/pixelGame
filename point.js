@@ -1,4 +1,4 @@
-class point{
+class Point{
     constructor(x,y){
         this.x = x;
         this.y = y;
@@ -7,7 +7,7 @@ class point{
         this.targetY = y;
 
         this.isFree = true;
-        this.lerpspeed = 0.02+  Math.random() * .2;
+        this.lerpspeed = 0.01+  Math.random() * .05;
     }
 
     update(){

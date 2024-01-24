@@ -30,7 +30,7 @@ html, body, canvas{
     padding: 0px;
     width: 200px;
     height: 200px;
-    z-index: 11;
+    z-index: -11;
 }
 
 #debug{
@@ -41,6 +41,6 @@ html, body, canvas{
     margin: auto;
     padding: 0px;
     width: 200px;
-    height: 200px;
+    height: 20px;
     z-index: 11;
 }

@@ -2,17 +2,13 @@ const canvas = document.querySelector('canvas')
 const gl = canvas.getContext('webgl')
 
 
-
 const { mat2, mat2d, mat4, mat3, quat, quat2, vec2, vec3, vec4 } = glMatrix;
 
 
 const program = gl.createProgram()
 
-const NUM_POINTS = 800
 const pointsData = []
 const buffer = gl.createBuffer()
-
-const  points = [];
 
 
 const pMatrix = mat4.create()
@@ -26,10 +22,6 @@ let attributes = {};
 let uniforms = {};
 
 let isSetupDone = false;
-
-
-
-
 
 
 function loadShaders(vertextShaderFileName,fragmentShaderFileName,callback){
@@ -51,8 +43,6 @@ function loadShaders(vertextShaderFileName,fragmentShaderFileName,callback){
     })
 
 }
-
-
 
 
 
@@ -89,40 +79,26 @@ function loadShaders(vertextShaderFileName,fragmentShaderFileName,callback){
 
 
 
-function SetFreePoint(x, y) {
-  
-  for (let i = 0; i < points.length; i++) {
-    if (points[i].isFree) {
-      points[i].targetX = x;
-      points[i].targetY = y;
-      points[i].isFree = false;
-      break;
-    }
-  }
-}
 
 
-function updatePoints() {
+
+function setPointsBuffer(points) {
 
     let arrayIndex = 0;
-    for (let index = 0; index < NUM_POINTS; index++) {
-        //let y  = Math.sin( index + Date.now() / 1000) * .15;
-        // console.log(points[index].x, points[index].y);
-        // console.log(index);
+    for(let i = 0; i < points.length; i++){
 
-        points[index].update();
-        if(!points[index].isFree){
-          pointsData[arrayIndex++] =  points[index].x;
-          pointsData[arrayIndex++] =  points[index].y;
+        points[i].update();
+        if(!points[i].isFree){
+          pointsData[arrayIndex++] =  points[i].x;
+          pointsData[arrayIndex++] =  points[i].y;
         }else{
           pointsData[arrayIndex++] =  0;
           pointsData[arrayIndex++] =  0;
         }
+  //  }
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-
-    // pointsArray = new Float32Array(points);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pointsData), gl.DYNAMIC_DRAW);
 
 }
@@ -140,14 +116,11 @@ function setup() {
     };
   
   
-    for (let index = 0; index < NUM_POINTS; index++) {
-      points.push(new point(Math.random(), Math.random()));
-    }
-  
+    setPointsBuffer(pointManager.points);
     // gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pointsData), gl.DYNAMIC_DRAW);
   
-    updatePoints();
+    //updatePoints();
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);

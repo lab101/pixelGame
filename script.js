@@ -1,42 +1,51 @@
 
-
+// based on
+// https://codepen.io/AzazelN28/pen/zvXZQw
 
   let angle = 0.0
   let isDirty = true
   let frameID
   let lastFrameTime = 0.0
 
+  let toggle = true
+
+
+  let pointManager = new PointManager(document.getElementById("canvas2"));
+  let sprites = [];
 
 loadShaders("vertex.glsl","fragment.glsl",function(){
     isSetupDone = true;
-    SetCanvas();
-
+   // SetCanvas();
+    createSprites();
+//    setPointsBuffer(pointManager.points);
     frameID = window.requestAnimationFrame(render);
     setInterval(function(){
-      SetCanvas();
+    //  SetCanvas();
     //  console.log("set canvas");
-    },1000);
+    if(toggle){
+      sprites[0].data = "FELIX";
+      toggle = false;
+    }else{
+      sprites[0].data = "LEWIS";
+      toggle = true;
+    }
+    pointManager.freeParticles();
+    pointManager.setPoints(sprites[0]);
+
+    },3000);
 });
+
+
+function createSprites(){
+  let sprite = new Sprite(0,0,100,100,"LEWIS");
+  pointManager.setPoints(sprite);
+  sprites.push(sprite);
+}
+
 
 function render(now) {
 
-  //SetCanvas();
- 
-  // const pixel = ctx2.getImageData(30, 30, 1, 1);
-  // const data = pixel.data;
 
-//  ctx2.fillRect(0, 0, 46, 35);
-
-  //const rgbColor = `rgb(${data[0]} ${data[1]} ${data[2]} / ${data[3] / 255})`;
-  //let destination = document.getElementById("debug");
-  //destination.style.background = rgbColor;
-
-
-  //https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
-
-
-  //return;
-  //console.log(ctx2);
 
   if (canvas.width !== canvas.clientWidth) {
     canvas.width = canvas.clientWidth
@@ -50,7 +59,10 @@ function render(now) {
 
   if(isSetupDone){
    
-  
+    for (let index = 0; index < sprites.length; index++) {
+      sprites[index].update();
+    }
+    
   if (isDirty) {
     gl.viewport(0, 0, canvas.width, canvas.height)
     mat4.perspective(pMatrix, Math.PI * 0.35, canvas.width / canvas.height, 0.01, 1000.0)
@@ -78,6 +90,8 @@ function render(now) {
   mat4.multiply(mvpMatrix, pMatrix, mvMatrix)
   
   gl.uniformMatrix4fv(uniforms.mvp, false, mvpMatrix)
+  
+  setPointsBuffer(pointManager.points);
   gl.drawArrays(gl.POINTS, 0, NUM_POINTS)
   
 
@@ -90,57 +104,23 @@ function render(now) {
   let debug = document.getElementById("debug");
   debug.innerHTML = fps;
 
-   updatePoints();
 }
 
-  frameID = window.requestAnimationFrame(render)
+ frameID = window.requestAnimationFrame(render)
 
  
   
 }
 
-function FreeParticles(){
-  for (let index = 0; index < NUM_POINTS; index++) {
-    points[index].isFree = true;
-  }
-}
+
 
 
 function SetCanvas(){
 
-  FreeParticles();
+  pointManager.freeParticles();
 
-      const ctx2 = document.getElementById("canvas2").getContext("2d");
-      ctx2.font = "48px serif";
+     // const ctx2 = document.getElementById("canvas2").getContext("2d");
 
-      ctx2.fillStyle = '#000000';
-      ctx2.fillRect(0, 0, 400, 400);
-      
-      ctx2.fillStyle = '#FFFFFF';
-    
-      const d = new Date();
-      let seconds = d.getSeconds();
-
-      let minutes = d.getMinutes();
-
-      //minutes = 60;
-
-      let xOffs = -4+ minutes/8.0;
-      let yOffs = -1 ;
-        
-
-      let text = Date.now();
-      ctx2.fillText(seconds, 0, 35);
-
-    for(let x=0;x<77;x++){
-      for(let y=0;y<35;y++){
-        const pixel = ctx2.getImageData(x, y, 1, 1);
-        const data = pixel.data;
-        if( data[0] > 0.7){
-          SetFreePoint((x/46) + xOffs,1.0-(y/35)+ yOffs);
-        }
-      }
-    }
 
   }
 

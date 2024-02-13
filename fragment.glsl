@@ -15,8 +15,11 @@ void main(void) {
   vec2 pc = (gl_PointCoord - 0.5) * 2.0;
 
   float dist = (1.0 - sqrt(pc.x * pc.x + pc.y * pc.y));
+  dist = smoothstep(0.6, 1.0, dist);
   vec4 color = interpolate4f(begin, end, dist);
 
-  gl_FragColor = vec4(dist, dist, dist, dist) * color;
+  gl_FragColor = vec4(dist, dist, dist, 1);
+
+  //gl_FragColor = vec4(dist, dist, dist, dist) * color;
 
 }

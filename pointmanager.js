@@ -1,4 +1,4 @@
-const NUM_POINTS = 3000
+const NUM_POINTS = 8000
 
 class PointManager {
 
@@ -16,8 +16,8 @@ class PointManager {
     setFreePoint(x, y) {
         for (let i = 0; i < this.points.length; i++) {
           if (this.points[i].isFree) {
-            this.points[i].targetX = x;
-            this.points[i].targetY = y;
+            this.points[i].xLocal = x;
+            this.points[i].yLocal = y;
             this.points[i].isFree = false;
             return this.points[i];
 
@@ -40,35 +40,26 @@ class PointManager {
         // this.points = points;
         //https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
 
+        
         const ctx2 = this.canvas.getContext('2d', {willReadFrequently: true});
-
-        if(Math.random() > 0.5){
-            ctx2.font = "58px serif";
-        }else{
-            ctx2.font = "38px sans-serif";
-        }
+        ctx2.font = "40px serif";
+        
         //ctx2.font = "58px serif";
 
-        ctx2.fillStyle = '#000000';
-        ctx2.fillRect(0, 0, 400, 400);
+        ctx2.fillStyle = '#330000';
+        ctx2.fillRect(0, 0, 400, this.canvas.height);
 
         ctx2.fillStyle = '#FFFFFF';
 
-        const d = new Date();
-        let seconds = d.getSeconds();
+        let xOffs = 0;//(Math.random() * .60) - 0.3;
+        let yOffs = 0;//0;//-1+ (Math.random() * .40);
 
-        let minutes = d.getMinutes();
+        ctx2.fillText(sprite.data, 0, 100);
 
-        //minutes = 60;
-
-        let xOffs = (Math.random() * .60) - 0.3;
-        let yOffs = -1+ (Math.random() * .40);
-
-        ctx2.fillText(sprite.data, 0, 45);
 
         let width = this.canvas.width
         let height = this.canvas.height
-        let step = 1;
+        let step = 1.0;
 
         sprite.points = [];
 
@@ -76,23 +67,17 @@ class PointManager {
             for (let y = 0; y < height; y+=step) {
                 const pixel = ctx2.getImageData(x, y, 1, 1);
                 const data = pixel.data;
-                if (data[0] > 0.7) {
+                if (data[1] > 0.9) {
                     let point=  this.setFreePoint((x / width) + xOffs, 1.0 - (y / height) + yOffs);
                     if(point!=null){
-                        point.targetX *= 4;
-                        point.targetY *= 4;
-                       // point.targetY += 1;
-                        point.targetX -= 1;
-
-
                         sprite.points.push(point);
                     }
                 }
             }
         }
 
-        //tmp
-       // loop through points
+    //tmp
+    // loop through points
        for(let i=0; i < this.points.length; i++){
         if(this.points[i].isFree){
             this.points[i].targetX = Math.random();

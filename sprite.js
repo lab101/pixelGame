@@ -6,6 +6,7 @@ class Sprite{
         this.h = h;
         this.data = data;
         this.points = [];
+        this.stepSize = 0.5;
     }
    
     move(x, y){
@@ -18,9 +19,27 @@ class Sprite{
         this.y = y;
     }
 
+    moveLeft(){
+        this.x -= this.stepSize;
+    }
+
+    moveRight(){
+        this.x += this.stepSize;
+    }
+
+    moveUp(){
+        this.y -= this.stepSize;
+    }
+
+    moveDown(){
+        this.y += this.stepSize;
+    }
+
     update(){
        // console.log(this.points.length);
         for(let i = 0; i < this.points.length; i++){
+            this.points[i].targetX = this.x + (this.points[i].xLocal * this.w);
+            this.points[i].targetY = this.y + (this.points[i].yLocal * this.h);
             this.points[i].update();
         }
     }

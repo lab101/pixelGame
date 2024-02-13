@@ -10,36 +10,44 @@
   let toggle = true
 
 
-  let pointManager = new PointManager(document.getElementById("canvas2"));
+  let pointManager = new PointManager(document.getElementById("drawCanvas"));
   let sprites = [];
 
 loadShaders("vertex.glsl","fragment.glsl",function(){
     isSetupDone = true;
-   // SetCanvas();
     createSprites();
-//    setPointsBuffer(pointManager.points);
     frameID = window.requestAnimationFrame(render);
-    setInterval(function(){
-    //  SetCanvas();
-    //  console.log("set canvas");
-    if(toggle){
-      sprites[0].data = "FELIX";
-      toggle = false;
-    }else{
-      sprites[0].data = "LEWIS";
-      toggle = true;
-    }
-    pointManager.freeParticles();
-    pointManager.setPoints(sprites[0]);
-
-    },3000);
+    setupHandlers();
 });
 
 
+function setupHandlers(){
+  document.addEventListener('keydown', function(event) {
+    if(event.keyCode == 37) {
+      // left arrow
+      sprites[0].moveLeft();
+    }
+    else if(event.keyCode == 39) {
+      // right arrow
+      sprites[0].moveRight();
+    }else if(event.keyCode == 38){
+      sprites[0].moveDown();
+    }else if(event.keyCode == 40){
+      sprites[0].moveUp();
+    }
+    
+
+  });
+}
+
 function createSprites(){
-  let sprite = new Sprite(0,0,100,100,"LEWIS");
+  let sprite = new Sprite(0,0,1.5,1.5,"22");
   pointManager.setPoints(sprite);
   sprites.push(sprite);
+
+  let sprite2 = new Sprite(-1,0,1,1,"9x3");
+  pointManager.setPoints(sprite2);
+  sprites.push(sprite2);
 }
 
 
@@ -76,7 +84,7 @@ function render(now) {
   // mat4.identity(mMatrix)
   
 
-  position[2] = 2;// Math.sin(now / 50000)
+  position[2] = 3;// Math.sin(now / 50000)
   
   mat4.identity(vMatrix)
   mat4.translate(vMatrix, vMatrix, position)

@@ -27,6 +27,7 @@ html, body{
     left: 0px;
     position: fixed;
     z-index: 11;
+    display: none;
 }
 
 #debug{

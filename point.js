@@ -2,6 +2,7 @@ class Point{
     constructor(x,y){
         this.x = x;
         this.y = y;        
+        this.hue = -1;
 
         this.targetX = x;
         this.targetY = y;
@@ -10,12 +11,12 @@ class Point{
         this.yLocal = 0;
 
         this.isFree = true;
-        this.lerpspeed = 0.002;//
+        this.lerpspeed = 0.03;//
         
         if(Math.random() > .8){
             this.lerpspeed +=Math.random() * .01;
         }else{
-            this.lerpspeed += Math.random() * .09;
+            this.lerpspeed += Math.random() * .04;
         }
         
     }

@@ -91,9 +91,11 @@ function setPointsBuffer(points) {
         if(!points[i].isFree){
           pointsData[arrayIndex++] =  points[i].x;
           pointsData[arrayIndex++] =  points[i].y;
+          pointsData[arrayIndex++] =  points[i].hue;
         }else{
           pointsData[arrayIndex++] =  0;
           pointsData[arrayIndex++] =  0;
+          pointsData[arrayIndex++] =  -1;
         }
   //  }
     }
@@ -128,7 +130,7 @@ function setup() {
     gl.useProgram(program);
   
     gl.enableVertexAttribArray(attributes.position);
-    gl.vertexAttribPointer(0, 2, gl.FLOAT, gl.FALSE, 0, 0);
+    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 0, 0);
   
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE);

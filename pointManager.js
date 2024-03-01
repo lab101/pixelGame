@@ -1,4 +1,4 @@
-const NUM_POINTS = 8000
+const NUM_POINTS = 4000
 
 class PointManager {
 
@@ -7,8 +7,11 @@ class PointManager {
         this.canvas = canvas;
         this.points = [];
 
+        var screenHeight = canvas.height;
+        var screenCenter = canvas.width / 2;
+
         for (let index = 0; index < NUM_POINTS; index++) {
-            this.points.push(new Point(Math.random(), Math.random()));
+            this.points.push(new Point(screenCenter, screenHeight));
           }
       
     }
@@ -36,7 +39,7 @@ class PointManager {
       }
 
 
-    setPoints(sprite) {
+    setPoints(sprite,step = 1.0) {
         // this.points = points;
         //https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas
 
@@ -59,7 +62,6 @@ class PointManager {
 
         let width = this.canvas.width
         let height = this.canvas.height
-        let step = 1.0;
 
         sprite.points = [];
 
@@ -68,7 +70,8 @@ class PointManager {
                 const pixel = ctx2.getImageData(x, y, 1, 1);
                 const data = pixel.data;
                 if (data[1] > 0.9) {
-                    let point=  this.setFreePoint((x / width) + xOffs, 1.0 - (y / height) + yOffs);
+                    let point=  this.setFreePoint((x ) + xOffs, 1.0 - (y / height) *height + height);
+                    //point.minLerp = 
                     if(point!=null){
                         sprite.points.push(point);
                     }

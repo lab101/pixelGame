@@ -81,12 +81,12 @@ class PointManager {
 
     //tmp
     // loop through points
-       for(let i=0; i < this.points.length; i++){
-        if(this.points[i].isFree){
-            this.points[i].targetX = Math.random();
-            this.points[i].targetY = Math.random();
-        }
-       }
+      //  for(let i=0; i < this.points.length; i++){
+      //   if(this.points[i].isFree){
+      //       this.points[i].targetX = Math.random();
+      //       this.points[i].targetY = Math.random();
+      //   }
+      //  }
 
 
 

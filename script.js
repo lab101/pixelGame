@@ -26,6 +26,10 @@ loadShaders("vertex.glsl","fragment.glsl",function(){
 
 
 function setupHandlers(){
+
+  //window.addEventListener('keydown', function(event) {
+
+
   document.addEventListener('keydown', function(event) {
     if(event.keyCode == 37) {
       // left arrow
@@ -39,11 +43,47 @@ function setupHandlers(){
       questionSprites[0].moveDown();
     }else if(event.keyCode == 40){
       questionSprites[0].moveUp();
+    }else if(event.keyCode == 32){
+      // space
+      launchSelectedAnswer();
     }
     
   });
 }
 
+
+function launchSelectedAnswer(){
+   let selectedAnswer = getSelectedAnswer();
+  if(selectedAnswer != null){
+      console.log(selectedAnswer.question);
+
+      for (let index = 0; index < questionSprites.length; index++) {
+        if(questionSprites[index].data == selectedAnswer.question){
+          //questionSprites[index].releasePoints();
+          //selectedAnswer.releasePoints();
+
+          questionSprites[index].explode();
+
+          selectedAnswer.movePointsTo(questionSprites[index]);
+          selectedAnswer.isFreeMovement = true;
+
+
+        }
+      }
+
+  }
+}
+
+
+function getSelectedAnswer(){
+  if(selectedAnswer < 0){
+    return null;
+  }
+  if(selectedAnswer >= answerSprites.length){
+    return null;
+  }
+  return answerSprites[selectedAnswer];
+}
 
 function moveSelector(){
   // modulate selected answer
@@ -52,9 +92,14 @@ function moveSelector(){
   for (let index = 0; index < answerSprites.length; index++) {
     if(index != selectedAnswer){
       answerSprites[index].setColorHue(-1);
+      answerSprites[index].scale = 1;
+      answerSprites[index].updatePoints(false);
     }else{
       answerSprites[index].setColorHue(0.5);
+      answerSprites[index].scale = 1.5;
+      answerSprites[index].updatePoints(true);
     }
+    
   }
 
 
@@ -84,7 +129,8 @@ function createSprites(){
   var x = 0;
   levelManager.currentLevel.forEach(element => {
     x += 200;
-    let sprite = new Sprite(x,10,3,3,element.a);
+    let sprite = new AnswerSprite(x,10,3,3,element.a);
+    sprite.question = element.q;
     sprite.directionX= -180;
 
     answerSprites.push(sprite);
@@ -162,13 +208,17 @@ function findLastAnswerSprite(){
 
 function answerSliderUpdate(){
   for (let index = 0; index < answerSprites.length; index++) {
-    answerSprites[index].update();
+    let answerSprite = answerSprites[index];
+    if(answerSprite.isFreeMovement) continue;
+    
+    answerSprite.update();
     //answerSprites[index].updatePoints(true);
 
-    if(answerSprites[index].x < -200){
-      var sprite = answerSprites[index];
-      sprite.x = findLastAnswerSprite() + 200;
-      sprite.updatePoints(true);
+    if(answerSprite.x < -80){      
+      let farestPoint = findLastAnswerSprite();
+      farestPoint = Math.max(farestPoint, getCanvasWidth());
+      answerSprite.x = farestPoint + 60;
+      answerSprite.updatePoints(true);
     }
   }
 }

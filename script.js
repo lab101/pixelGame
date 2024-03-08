@@ -1,5 +1,5 @@
 
-// based on
+// point sprites code based on
 // https://codepen.io/AzazelN28/pen/zvXZQw
 
   let angle = 0.0
@@ -119,7 +119,7 @@ function createSprites(){
   questionSprites.push(sprite);
   
   question = levelManager.nextQuestion();
-  let sprite2 = new Sprite(400,1200,6,6,question.q);
+  let sprite2 = new Sprite(400,700,6,6,question.q);
   sprite2.directionY = -75;
   pointManager.setPoints(sprite2);
   questionSprites.push(sprite2);
@@ -161,7 +161,8 @@ function update(){
 
 
   for (let index = 0; index < questionSprites.length; index++) {
-    questionSprites[index].update();
+    questionSprites[index].addDirection();
+    questionSprites[index].animateToTarget();
 
     if(questionSprites[index].y < -100){
       var sprite = questionSprites[index];

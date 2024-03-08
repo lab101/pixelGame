@@ -21,13 +21,16 @@ class Point{
         
     }
 
-    update(){
+    update(lerpValue){
 
         
-        let diffX = this.targetX - this.x;
-        let diffY = this.targetY - this.y;
+        // let diffX = this.targetX - this.x;
+        // let diffY = this.targetY - this.y;
 
-        this.x += diffX * this.lerpspeed;
-        this.y += diffY * this.lerpspeed;
+        // this.x += diffX * this.lerpspeed;
+        // this.y += diffY * this.lerpspeed;
+
+        this.x = lerp(this.x,this.targetX,lerpValue);
+        this.y = lerp(this.y,this.targetY,lerpValue);
     }
 }

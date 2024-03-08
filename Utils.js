@@ -1,0 +1,1 @@
+const lerp = (a, b, amount) => (1 - amount) * a + amount * b;

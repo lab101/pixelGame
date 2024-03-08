@@ -11,39 +11,22 @@ class Sprite{
         this.directionY = 0;
         this.scale = 1;
         this.minLerpSpeed = minLerpSpeed;
+        this.lerpAnimation = 0;
     }
    
-    move(x, y){
-        this.x += x;
-        this.y += y;
-    }
+    addDirection(){
+        this.y += this.directionY;
+        this.x += this.directionX;
 
-    moveTo(x, y){
-        this.x = x;
-        this.y = y;
+        console.log(this.y);
     }
-
-    moveLeft(){
-        this.x -= this.stepSize;
-    }
-
-    moveRight(){
-        this.x += this.stepSize;
-    }
-
-    moveUp(){
-        this.y -= this.stepSize;
-    }
-
-    moveDown(){
-        this.y += this.stepSize;
-    }
+  
 
     update(){
        // console.log(this.points.length);
-        this.y += this.directionY;
-        this.x += this.directionX;
-        this.updatePoints(false);
+      //  this.y += this.directionY;
+      //  this.x += this.directionX;
+       // this.updatePoints(false);
         
     }
 
@@ -81,6 +64,29 @@ class Sprite{
         }
     }
 
+
+    animateToTarget(){
+
+        var _this = this;
+
+        for(let i = 0; i < this.points.length; i++){
+            this.points[i].targetX = this.x + (this.points[i].xLocal * this.w * this.scale);
+            this.points[i].targetY = this.y + (this.points[i].yLocal * this.h* this.scale);
+        }
+
+        gsap.fromTo(this,{lerpAnimation:0}, {lerpAnimation: 1,duration:0.1, ease: "power3.Out"})
+        .eventCallback("onUpdate", function(){    
+          //  console.log(_this.lerpAnimation);
+            for(let i = 0; i < _this.points.length; i++){
+                _this.points[i].update(_this.lerpAnimation);
+            
+            }
+        
+        
+        });        
+
+
+    }
 
 
     setColorHue(hue){

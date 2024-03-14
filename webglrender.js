@@ -87,8 +87,9 @@ function setPointsBuffer(points) {
     let arrayIndex = 0;
     for(let i = 0; i < points.length; i++){
 
-        points[i].update();
+        //points[i].update();
         if(!points[i].isFree){
+       //   console.log(points[i].x + " - " + points[i].y);
           pointsData[arrayIndex++] =  points[i].x;
           pointsData[arrayIndex++] =  points[i].y;
           pointsData[arrayIndex++] =  points[i].hue;

@@ -34,11 +34,12 @@ function setupHandlers(){
     if(event.keyCode == 37) {
       // left arrow
       selectedAnswer--;
-      moveSelector();
+      moveSelector(-1);
     }
+    // right arrow
     else if(event.keyCode == 39) {
       selectedAnswer++;
-      moveSelector();
+      moveSelector(+1);
     }else if(event.keyCode == 38){
       questionSprites[0].moveDown();
     }else if(event.keyCode == 40){
@@ -54,6 +55,7 @@ function setupHandlers(){
 
 function launchSelectedAnswer(){
    let selectedAnswer = getSelectedAnswer();
+   var _this = this;
   if(selectedAnswer != null){
       console.log(selectedAnswer.question);
 
@@ -61,11 +63,24 @@ function launchSelectedAnswer(){
         if(questionSprites[index].data == selectedAnswer.question){
           //questionSprites[index].releasePoints();
           //selectedAnswer.releasePoints();
+          questionSprites[index].isDone = true
 
-          questionSprites[index].explode();
+          let questionSprite = questionSprites[index];
+          selectedAnswer.onMoveDone = (sprite) => {
+              console.log("+++ tween");
+              sprite.releasePoints();
+              questionSprite.releasePoints();
+              _this.setNewSpriteQuestion(questionSprite);
+             questionSprite.startMoving();
 
+          };
           selectedAnswer.movePointsTo(questionSprites[index]);
-          selectedAnswer.isFreeMovement = true;
+
+//          selectedAnswer.animateToTarget();
+
+  //        selectedAnswer.isFreeMovement = true;
+//          questionSprites[index].explode();
+
 
 
         }
@@ -85,21 +100,32 @@ function getSelectedAnswer(){
   return answerSprites[selectedAnswer];
 }
 
-function moveSelector(){
+function moveSelector(direction){
   // modulate selected answer
   selectedAnswer = selectedAnswer % answerSprites.length;
 
+
+ for (let index = 0; index < answerSprites.length; index++) {
+    answerSprites[index].x += 100*direction;
+    answerSprites[index].animateToTarget(0.14);
+    //answerSprites[index].updatePoints(false);
+ }
+
+
+
+
+
+  console.log(selectedAnswer);
   for (let index = 0; index < answerSprites.length; index++) {
     if(index != selectedAnswer){
       answerSprites[index].setColorHue(-1);
       answerSprites[index].scale = 1;
-      answerSprites[index].updatePoints(false);
+      //answerSprites[index].updatePoints(false);
     }else{
       answerSprites[index].setColorHue(0.5);
       answerSprites[index].scale = 1.5;
-      answerSprites[index].updatePoints(true);
-    }
-    
+     // answerSprites[index].updatePoints(true);
+    }    
   }
 
 
@@ -111,19 +137,26 @@ function createSprites(){
   var h = window.innerHeight;
 
   var question = levelManager.nextQuestion();
-  console.log(question.q);
+  //console.log(question.q);
   
-  let sprite = new Sprite(200,h,5,5,question.q);
+  let sprite = new QuestionSprite(200,500,5,5,question.q);
   sprite.directionY = -150;
+  sprite.setColorHue(-1);
   pointManager.setPoints(sprite);
   questionSprites.push(sprite);
+  sprite.startMoving();
   
   question = levelManager.nextQuestion();
-  let sprite2 = new Sprite(400,700,6,6,question.q);
+  let sprite2 = new QuestionSprite(400,700,6,6,question.q);
   sprite2.directionY = -75;
   pointManager.setPoints(sprite2);
   questionSprites.push(sprite2);
+  sprite2.startMoving();
 
+  for (let index = 0; index < questionSprites.length; index++) {
+      questionSprites[index].updatePoints(true);
+      questionSprites[index].onMoveDone = spriteMoveDone;
+    }
 
   // set all answers
   var x = 0;
@@ -137,16 +170,38 @@ function createSprites(){
     pointManager.setPoints(sprite,1.5);
 
     sprite.updatePoints(true);
+    sprite.animateToTarget();
     sprite.setColorHue(-1);
 
   });
 
+}
 
-  for (let index = 0; index < questionSprites.length; index++) {
-    questionSprites[index].updatePoints(true);
- }
+function spriteMoveDone(sprite){
+ // (sprite) => {
+    console.log("done tween");
+    //console.log(this);
+    if(sprite.isDone){
+      console.log("not moving again");
+      return;
+    }
+    if(sprite.y < 50){
+      console.log("stop moving out of screen set new sprite");
+      sprite.releasePoints();
+      sprite.stopMoving();
 
+      setNewSpriteQuestion(sprite);   
+      sprite.startMoving();       
+    }else{
+      console.log("start moving again " + sprite.isMoving);
+      sprite.startMoving();
+    }
+//  }
+}
 
+function CheckSpriteEnd(){
+ //console.log("done");
+ //console.log(this.y);
 }
 
 function getCanvasHeight(){
@@ -160,16 +215,16 @@ function getCanvasWidth(){
 function update(){
 
 
-  for (let index = 0; index < questionSprites.length; index++) {
-    questionSprites[index].addDirection();
-    questionSprites[index].animateToTarget();
+  // for (let index = 0; index < questionSprites.length; index++) {
+  //   questionSprites[index].addDirection();
+  //   questionSprites[index].animateToTarget();
 
-    if(questionSprites[index].y < -100){
-      var sprite = questionSprites[index];
-      sprite.releasePoints();
-      setNewSpriteQuestion(sprite);
-    }
-  }
+  //   if(questionSprites[index].y < -100){
+  //     var sprite = questionSprites[index];
+  //     sprite.releasePoints();
+  //     setNewSpriteQuestion(sprite);
+  //   }
+  // }
 
 
  
@@ -177,21 +232,34 @@ function update(){
 }
 
 function setNewSpriteQuestion(sprite){
+  sprite.stopMoving();
+
   var question = levelManager.nextQuestion();
   sprite.y = getCanvasHeight();
   sprite.x = getCanvasWidth() * 0.5;
 
   // offset left or right
-  let screenMargin = getCanvasWidth() * 0.1;
+  let screenMargin = getCanvasWidth() * 0.4;
   sprite.x += (Math.random()-0.5) * screenMargin;
 
-  console.log(sprite.x);
+  console.log("setnew sprite");
       
-  sprite.updatePoints(true);
+ // sprite.updatePoints(true);
 
   sprite.data = question.q;
   pointManager.setPoints(sprite);
-  sprite.updatePoints(true);
+  
+  sprite.isDone = false;
+  //sprite.updatePoints(true);
+  // sprite.onMoveDone = (sprite) => {
+  //   this.spriteMoveDone(sprite);
+  // };
+  
+  console.log(sprite);
+ // spriteMoveDone;
+
+  //sprite.startMoving();
+
 }
 
 
@@ -208,20 +276,21 @@ function findLastAnswerSprite(){
 
 
 function answerSliderUpdate(){
-  for (let index = 0; index < answerSprites.length; index++) {
-    let answerSprite = answerSprites[index];
-    if(answerSprite.isFreeMovement) continue;
+  // console.log("update");
+  // for (let index = 0; index < answerSprites.length; index++) {
+  //   let answerSprite = answerSprites[index];
+  //   if(answerSprite.isFreeMovement) continue;
     
-    answerSprite.update();
-    //answerSprites[index].updatePoints(true);
+  // //  answerSprite.update();
+  //   //answerSprites[index].updatePoints(true);
 
-    if(answerSprite.x < -80){      
-      let farestPoint = findLastAnswerSprite();
-      farestPoint = Math.max(farestPoint, getCanvasWidth());
-      answerSprite.x = farestPoint + 60;
-      answerSprite.updatePoints(true);
-    }
-  }
+  //   if(answerSprite.x < -80){      
+  //     let farestPoint = findLastAnswerSprite();
+  //     farestPoint = Math.max(farestPoint, getCanvasWidth());
+  //     answerSprite.x = farestPoint + 60;
+  //     answerSprite.updatePoints(true);
+  //   }
+  // }
 }
 
 
@@ -258,6 +327,7 @@ function render(now) {
   
   gl.uniformMatrix4fv(uniforms.mvp, false, mvpMatrix)
   
+  //console.log(pointManager.points);
   setPointsBuffer(pointManager.points);
   gl.drawArrays(gl.POINTS, 0, NUM_POINTS)
   
@@ -274,26 +344,10 @@ function render(now) {
 }
 
 frameID = window.requestAnimationFrame(render)
-
- 
   
 }
 
 
 gameTimer = setInterval(update, 3000);
-let anserTimer = setInterval(answerSliderUpdate, 2000);
-
-
-
-
-
-function SetCanvas(){
-
-  pointManager.freeParticles();
-
-     // const ctx2 = document.getElementById("canvas2").getContext("2d");
-
-
-  }
-
+//let anserTimer = setInterval(answerSliderUpdate, 2000);
 

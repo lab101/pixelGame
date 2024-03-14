@@ -11,7 +11,7 @@ class PointManager {
         var screenCenter = canvas.width / 2;
 
         for (let index = 0; index < NUM_POINTS; index++) {
-            this.points.push(new Point(screenCenter, screenHeight));
+            this.points.push(new Point(screenCenter, 900));
           }
       
     }
